@@ -5,6 +5,7 @@ import { CreateTaskDto } from "./dto/create-task.dto";
 import { GetTasksFilterDto } from "./dto/get-tasks-filter.dto";
 import { Task } from "./dto/task.entity";
 import { TaskRepository } from "./dto/task.repository";
+import { User } from "src/auth/user.entity";
 
 export class TasksService {
   private tasks: Task[] = [];
@@ -13,8 +14,8 @@ export class TasksService {
     @Inject(TaskRepository) private readonly taskRepository: TaskRepository
   ) {}
 
-  async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
-    const tasks = await this.taskRepository.getTasks(filterDto);
+  async getTasks(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
+    const tasks = await this.taskRepository.getTasks(filterDto, user);
     return tasks;
   }
 
@@ -27,8 +28,8 @@ export class TasksService {
     return found;
   }
 
-  async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.taskRepository.createTask(createTaskDto);
+  async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
+    return this.taskRepository.createTask(createTaskDto, user);
   }
 
   async updateTaskStatus(id: string, status: TaskStatus) {
