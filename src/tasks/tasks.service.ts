@@ -19,8 +19,8 @@ export class TasksService {
     return tasks;
   }
 
-  async getTaskById(id: string): Promise<Task> {
-    const found = await this.taskRepository.findOneBy({ id });
+  async getTaskById(id: string, user: User): Promise<Task> {
+    const found = await this.taskRepository.findOneBy({ id, user });
     if (!found) {
       throw new NotFoundException(`Task with ID "${id}" not found`);
     }
@@ -32,18 +32,18 @@ export class TasksService {
     return this.taskRepository.createTask(createTaskDto, user);
   }
 
-  async updateTaskStatus(id: string, status: TaskStatus) {
-    const task = await this.getTaskById(id);
+  async updateTaskStatus(id: string, status: TaskStatus, user: User) {
+    const task = await this.getTaskById(id, user);
     task.status = status;
     await this.taskRepository.save(task);
     return task;
   }
 
-  async deleteTask(id: string) {
+  async deleteTask(id: string, user: User): Promise<void> {
     // Note: we don't need to find the task first before deleting it
     // because the delete method will not throw an error if the task is not found
     // Good for performance because we don't need to make an extra query to the database
-    const result = await this.taskRepository.delete({ id });
+    const result = await this.taskRepository.delete({ id, user });
     if (result.affected === 0) {
       throw new NotFoundException(`Task with ID "${id}" not found`);
     }
