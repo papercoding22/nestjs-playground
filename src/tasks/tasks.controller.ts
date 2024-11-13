@@ -17,24 +17,41 @@ import { GetTasksFilterDto } from "./dto/get-tasks-filter.dto";
 import { AuthGuard } from "@nestjs/passport";
 import GetUser from "src/auth/get-user.decorator";
 import { User } from "src/auth/user.entity";
+import { Logger } from "@nestjs/common";
 
 @Controller("tasks")
 @UseGuards(AuthGuard())
 export class TasksController {
+  private logger = new Logger("TasksController");
   constructor(private tasksService: TasksService) {}
 
   @Get("/:id")
-  async getTaskById(@Param("id") id: string, @GetUser() user: User): Promise<Task> {
+  async getTaskById(
+    @Param("id") id: string,
+    @GetUser() user: User
+  ): Promise<Task> {
+    this.logger.verbose(
+      `User "${user.username}" retrieving task with ID: ${id}`
+    );
     return this.tasksService.getTaskById(id, user);
   }
 
   @Get()
-  getTasks(@Query() filterDto: GetTasksFilterDto, @GetUser() user: User): Promise<Task[]> {
+  getTasks(
+    @Query() filterDto: GetTasksFilterDto,
+    @GetUser() user: User
+  ): Promise<Task[]> {
+    this.logger.verbose(
+      `User "${user.username}" retrieving all tasks. Filter: ${JSON.stringify(filterDto)}`
+    );
     return this.tasksService.getTasks(filterDto, user);
   }
 
   @Post()
-  createTask(@Body() createTaskDto: CreateTaskDto, @GetUser() user: User): Promise<Task> {
+  createTask(
+    @Body() createTaskDto: CreateTaskDto,
+    @GetUser() user: User
+  ): Promise<Task> {
     return this.tasksService.createTask(createTaskDto, user);
   }
 
@@ -44,7 +61,11 @@ export class TasksController {
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
     @GetUser() user: User
   ): Promise<Task> {
-    return this.tasksService.updateTaskStatus(id, updateTaskStatusDto.status, user);
+    return this.tasksService.updateTaskStatus(
+      id,
+      updateTaskStatusDto.status,
+      user
+    );
   }
 
   @Delete("/:id")
