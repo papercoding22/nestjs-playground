@@ -5,7 +5,7 @@ import { CreateTaskDto } from "./dto/create-task.dto";
 import { GetTasksFilterDto } from "./dto/get-tasks-filter.dto";
 import { Task } from "./dto/task.entity";
 import { TaskRepository } from "./dto/task.repository";
-import { User } from "src/auth/user.entity";
+import { User } from "../auth/user.entity";
 
 export class TasksService {
   private tasks: Task[] = [];
