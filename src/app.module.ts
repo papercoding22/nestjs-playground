@@ -1,32 +1,24 @@
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { TasksModule } from "./tasks/tasks.module";
+import { GraphQLModule } from "@nestjs/graphql";
+import { LessonModule } from "./lesson/lesson.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AuthModule } from "./auth/auth.module";
-import { configSchema } from "./config.schema";
+import { Lesson } from "./lesson/lesson.entity";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: `.env.stage.${process.env.STAGE}`,
-      validationSchema: configSchema,
+    TypeOrmModule.forRoot({
+      type: "mongodb",
+      url: "mongodb://localhost/school",
+      synchronize: true,
+      useUnifiedTopology: true,
+      entities: [Lesson],
     }),
-    TasksModule,
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: "postgres",
-        host: configService.get("DB_HOST"),
-        port: configService.get("DB_PORT"),
-        username: configService.get("DB_USERNAME"),
-        password: configService.get("DB_PASSWORD"),
-        database: configService.get("DB_DATABASE"),
-        autoLoadEntities: true,
-        synchronize: true,
-      }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: "schema.gql",
     }),
-    AuthModule,
+    LessonModule,
   ],
 })
 export class AppModule {}
