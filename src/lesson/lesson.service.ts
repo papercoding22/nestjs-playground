@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Lesson } from "./lesson.entity";
 import { Repository } from "typeorm";
 import { v4 as uuid } from "uuid";
+import { CreateLessonInput } from "./lesson.input";
 
 @Injectable()
 export class LessonService {
@@ -10,7 +11,12 @@ export class LessonService {
     @InjectRepository(Lesson) private lessonRepository: Repository<Lesson>
   ) {}
 
-  createLesson(name: string, startDate: string, endDate: string) {
+  async getLesson(id: string) {
+    return this.lessonRepository.findOneBy({ id });
+  }
+
+  createLesson(createLesson: CreateLessonInput) {
+    const { name, startDate, endDate } = createLesson;
     const lesson = this.lessonRepository.create({
       id: uuid(),
       name,
