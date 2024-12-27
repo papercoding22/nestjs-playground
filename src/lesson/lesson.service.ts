@@ -15,18 +15,25 @@ export class LessonService {
     return this.lessonRepository.findOneBy({ id });
   }
 
-  async getAllLessons() {
+  getAllLessons() {
     return this.lessonRepository.find();
   }
 
   createLesson(createLesson: CreateLessonInput) {
-    const { name, startDate, endDate } = createLesson;
+    const { name, startDate, endDate, students } = createLesson;
     const lesson = this.lessonRepository.create({
       id: uuid(),
       name,
       startDate,
       endDate,
+      students,
     });
+    return this.lessonRepository.save(lesson);
+  }
+
+  async assignStudentsToLesson(lessonId: string, studentIds: string[]) {
+    const lesson = await this.lessonRepository.findOneBy({ id: lessonId });
+    lesson.students = [...lesson.students, ...studentIds];
     return this.lessonRepository.save(lesson);
   }
 }
