@@ -10,6 +10,7 @@ type Lesson {
 }
 
 type Query {
+  lessons: [Lesson!]!
   lesson(id: String!): Lesson!
 }
 

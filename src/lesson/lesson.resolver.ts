@@ -7,6 +7,12 @@ import { CreateLessonInput } from "./lesson.input";
 export class LessonResolver {
   constructor(private lessonService: LessonService) {}
 
+  // All lessons
+  @Query((returns) => [LessonType])
+  lessons() {
+    return this.lessonService.getAllLessons();
+  }
+
   @Query((returns) => LessonType)
   async lesson(@Args("id") id: string) {
     const lesson = await this.lessonService.getLesson(id);

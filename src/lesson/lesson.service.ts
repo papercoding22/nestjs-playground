@@ -15,6 +15,10 @@ export class LessonService {
     return this.lessonRepository.findOneBy({ id });
   }
 
+  async getAllLessons() {
+    return this.lessonRepository.find();
+  }
+
   createLesson(createLesson: CreateLessonInput) {
     const { name, startDate, endDate } = createLesson;
     const lesson = this.lessonRepository.create({
